@@ -2,9 +2,11 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
+// creer un compte  
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
+        // creer un model
         const user = new User({
             email : req.body.email,
             password: hash
@@ -12,9 +14,9 @@ exports.signup = (req, res, next) => {
 
         user.save()
         .then(() => res.status(201).json({message : 'utilisateur créé !'}))
-        .catch(error => res.status(400).json({ error}));
+        .catch(error => res.status(400).json({ error: error.message }));
     })
-    .catch(error => res.status(500).json({error}));
+    .catch(error => res.status(500).json({error: error.message}));
 };
 
 // pour connecter utlisateur existant 
@@ -38,7 +40,7 @@ exports.login = (req, res, next) => {
                        )
                     });
                 })
-                .catch(error => res.status(500).json({ error }));
+                .catch(error => res.status(500).json({ error: error.message }));
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => res.status(500).json({ error: error.message }));
  }; 
