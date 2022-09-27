@@ -3,7 +3,21 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 // creer un compte  
+function validateEmail (emailAdress)
+{
+  let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (emailAdress.match(regexEmail)) {
+    return true; 
+  } else {
+    return false; 
+  }
+}
+
 exports.signup = (req, res, next) => {
+    if (!validateEmail(req.body.email) || req.body.trim().length < 6) {
+        return res.status(400).json({message : "Il faut entrer un email valide et un mot de passe de 6 caractère au moin!"})
+    }
+
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         // creer un model
