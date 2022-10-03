@@ -14,7 +14,7 @@ function validateEmail (emailAdress)
 }
 
 exports.signup = (req, res, next) => {
-    if (!validateEmail(req.body.email) || req.body.trim().length < 6) {
+    if (!validateEmail(req.body.email) || req.body.password.trim().length < 6) {
         return res.status(400).json({message : "Il faut entrer un email valide et un mot de passe de 6 caractère au moin!"})
     }
 

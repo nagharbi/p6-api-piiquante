@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const sauceCtrol = require('../controllers/sauce');
+// importer le middelware auth
+const authMiddleware = require('../middlewares/auth');
+// importer le middelware multer-congig
+const multerMiddleware = require('../middlewares/multer-config');
 
-router.get('/', sauceCtrol.getAllSauces);
-router.get('/:id', sauceCtrol.getOneSauce);
-router.post('/', sauceCtrol.createSauce);
-router.put('/:id', sauceCtrol.updateSauce);
-router.delete('/:id', sauceCtrol.deleteSauce);
-router.post('/:id/like', sauceCtrol.likeSauce);
+router.get('/', authMiddleware, sauceCtrol.getAllSauces);
+router.get('/:id', authMiddleware, sauceCtrol.getOneSauce);
+router.post('/', authMiddleware, multerMiddleware, sauceCtrol.createSauce);
+router.put('/:id', authMiddleware, multerMiddleware, sauceCtrol.updateSauce);
+router.delete('/:id', authMiddleware, sauceCtrol.deleteSauce);
+router.post('/:id/like', authMiddleware, sauceCtrol.likeSauce);
 
 module.exports = router;
