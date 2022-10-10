@@ -4,13 +4,13 @@ const fs = require('fs');
 exports.getAllSauces = (req, res) => {
     Sauce.find()
     .then(sauces => res.status(200).json(sauces))
-    .catch(error =>res.status(500).json({error}));
+    .catch(error =>res.status(500).json({error: error.message}));
 };
 
 exports.getOneSauce = (req, res) => {
     Sauce.findOne({_id: req.params.id})
-    .then(sauces => res.status(200).json(sauces))
-    .catch(error => res.status(500).json({error}));
+    .then(sauce => res.status(200).json(sauce))
+    .catch(error => res.status(500).json({error: error.message}));
 };
 
 exports.createSauce = (req, res) => {
@@ -100,7 +100,48 @@ exports.deleteSauce = (req, res) => {
         }); 
 };
 
+function likeDislike(userId, like, sauce) {
+    let sauceUpdated = null;
+
+    // Like la sauce
+    if (like === 1) {
+        sauceUpdated = {$inc: {likes: 1}, $push: {usersLiked: userId}};
+    }
+
+    // Dislike la sauce
+    if (like === -1) {
+        sauceUpdated = {$inc: {dislikes: 1}, $push: {usersDisliked: userId}};
+    }
+
+    // Retirer le like de la sauce
+    if (like === 0 && sauce.usersLiked.includes(userId)) {
+        sauceUpdated = {$inc: {likes: -1}, $pull: {usersLiked: userId}};
+    }
+
+    // Retirer le dislike de la sauce
+    if (like === 0 && sauce.usersDisliked.includes(userId)) {
+        sauceUpdated = {$inc: {dislikes: -1}, $pull: {usersDisliked: userId}};
+    }
+
+    return sauceUpdated;
+}
+
 exports.likeSauce = (req, res) => {
+    console.log(req.body);
+    const userId = req.body.userId;
+    const like = req.body.like;
+
+    // Rechercher la sauce selectionné pour verifier si l'utilisateur à retirer le like ou dislike
+    Sauce.findOne({_id: req.params.id})
+    .then(sauce => {
+        const sauceUpdated = likeDislike(userId, like, sauce);
+        if (sauceUpdated) {
+            Sauce.updateOne({ _id: req.params.id }, sauceUpdated)
+                .then(() => res.status(200).json({message : 'Sauce modifié!'}))
+                .catch(error => res.status(500).json({ error: error.message }));
+        } else {
+            return res.status(400).json({ message: 'Mauvaise demande!' })
+        }
+    })
+    .catch(error => res.status(500).json({error: error.message}));
 };
-
-
