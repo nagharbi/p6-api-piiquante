@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// Pour rendre l'email unique
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = mongoose.Schema({
@@ -8,6 +9,5 @@ const userSchema = mongoose.Schema({
 
 userSchema.plugin(uniqueValidator);
 
-
-
+// Exporter le model User
 module.exports = mongoose.model('User', userSchema);

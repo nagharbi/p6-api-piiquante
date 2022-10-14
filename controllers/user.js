@@ -1,21 +1,33 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
-// creer un compte  
-function validateEmail (emailAdress)
-{
-  let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  if (emailAdress.match(regexEmail)) {
-    return true; 
-  } else {
-    return false; 
-  }
+ 
+const validateEmail = (email) => {
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (email.match(regexEmail)) {
+        return true; 
+    } else {
+        return false; 
+    }
 }
 
+const validatePassword = (password) => {
+    let regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/;
+    if (password.match(regexPassword)) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+// creer un compte
 exports.signup = (req, res, next) => {
+    if (!validatePassword(req.body.password)) {
+        return res.status(400).json({message : "Le mot de passe doit contenir au minimum huit caractères, au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial!"})
+    }
+
     if (!validateEmail(req.body.email) || req.body.password.trim().length < 6) {
-        return res.status(400).json({message : "Il faut entrer un email valide et un mot de passe de 6 caractère au moin!"})
+        return res.status(400).json({message : "Il faut entrer un email valide!"})
     }
 
     bcrypt.hash(req.body.password, 10)

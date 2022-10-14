@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sauceCtrol = require('../controllers/sauce');
 // importer le middelware auth
+// pour securiser l'API Sauce (elle devient une API privée)
 const authMiddleware = require('../middlewares/auth');
 // importer le middelware multer-congig
 const multerMiddleware = require('../middlewares/multer-config');
