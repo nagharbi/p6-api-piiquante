@@ -1,5 +1,6 @@
 // importer le http de node 
 const http = require('http');
+//creer un fichier app.js
 const app = require('./app');
 // Pour lire les variables d'env
 require('dotenv').config()
@@ -21,7 +22,6 @@ const normalizePort = val => {
 const port = normalizePort(process.env.PORT || '3000');
 // le serveur sera demarer sur le PORT || 3000;
 app.set('port', port);
-
 // Renvoyer un message compréhension en cas d'erreur serveur
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
