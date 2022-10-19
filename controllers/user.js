@@ -22,6 +22,7 @@ const validatePassword = (password) => {
 
 // creer un compte
 exports.signup = (req, res, next) => {
+    //si le password n'est pas valid
     if (!validatePassword(req.body.password)) {
         return res.status(400).json({message : "Le mot de passe doit contenir au minimum huit caractères, au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial!"})
     }
@@ -47,19 +48,23 @@ exports.signup = (req, res, next) => {
 
 // pour connecter utlisateur existant 
 exports.login = (req, res, next) => {
+    // j'ai chercher l'utlisateur par email
     User.findOne({ email: req.body.email })
         .then(user => {
             if (!user) {
                 return res.status(401).json({ message: 'Paire login/mot de passe incorrecte'});
             }
+            // bcrypt.compare pour valider le mot de passe crypter
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
+                    // not valid
                     if (!valid) {
                         return res.status(401).json({ message: 'Paire login/mot de passe incorrecte' });
                     }
+                    // si il valid je passe un objet 
                     res.status(200).json({
                         userId: user._id,
-                        token: jwt.sign(    
+                        token: jwt.sign(    //jsonwebtoken pour géner un token 
                             { userId: user._id },
                             process.env.SECRET_KEY,
                             { expiresIn: '24h' }

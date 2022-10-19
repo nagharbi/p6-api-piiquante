@@ -15,6 +15,8 @@ require('dotenv').config();
 const app = express();
 
 // 5. connection à la base de donnée 
+
+// chaine de connection dans le DB_url
 mongoose.connect(process.env.DB_URL,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
